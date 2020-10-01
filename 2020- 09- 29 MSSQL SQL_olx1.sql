@@ -1,101 +1,98 @@
-
 --drop database olx
--- create database olx
+--create database olx
 
 use olx
+
+---------------------------------------------------------
+-- Table structure for table `category`
+
 --drop table category
+
 CREATE TABLE category (
-  [id] int NOT NULL identity(1, 1) primary key,
-  [name] nvarchar(50) NOT NULL,
-  [url] nvarchar(100) NOT NULL,
-  CONSTRAINT AK_urlID unique ([url]),
-  [parent] int NOT NULL,
-  CONSTRAINT AK_ParentID unique ([parent]),
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Categ_name] nvarchar(50) NOT NULL,
+  [Categ_url] nvarchar(100) NOT NULL,
+  CONSTRAINT AK_Categ_url_ID unique ([Categ_url]),
+  [Parent] int NOT NULL,
+  CONSTRAINT AK_ParentID unique ([Parent]),
+  [Last_update_data] datetime2(0) NOT NULL
+);
 
-  [date] datetime2(0) NOT NULL
-) ;
--- --------------------------------------------------------
-
-
-
---
+---------------------------------------------------------
 -- Table structure for table `profiles`
---
---DROP TABLE profiles;
+
+--drop table profiles;
 
 CREATE TABLE profiles (
-  [id] int NOT NULL identity(1, 1) primary key,
-  [name] nvarchar(100) NOT NULL,
-  [date] datetime2(0) NOT NULL,
-  
-  [url] nvarchar(200) NOT NULL,
-  CONSTRAINT AK_urlProfID  unique ([url]),
-  
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Prof_name] nvarchar(100) NOT NULL,
+  [Reg_date] datetime2(0) NOT NULL,  
+  [Prof_url] nvarchar(200) NOT NULL,
+  CONSTRAINT AK_urlProfID  unique ([Prof_url]),
+  [Last_update_data] datetime2(0) NOT NULL,
+  [Prof_status] int NOT NULL,
+);
 
-  [status] int NOT NULL,
-)	;
+---------------------------------------------------------
+-- Table structure for table `phones`
 
---DROP TABLE phones;
+--drop table phones;
 
 CREATE TABLE phones (
-  [id] int NOT NULL identity(1, 1) primary key,
-  [number] nvarchar(18) NOT NULL,
-  [date] datetime2(0) NOT NULL,
-  [status] smallint NOT NULL,
-  [profile_id] int NOT NULL,
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Phone_num] nvarchar(18) NOT NULL,
+  [Scan_date] datetime2(0) NOT NULL,
+  [Phone_status] binary NOT NULL,
+  [Prof_id] int NOT NULL,
 
-  CONSTRAINT FK_phone_id foreign key ([profile_id]) references profiles ([id])
-)  ;
+  CONSTRAINT FK_phone_id foreign key ([Prof_id]) references profiles ([id])
+);
 
---
+---------------------------------------------------------
 -- Table structure for table `tags`
---
---DROP TABLE tags;
+
+--drop table tags;
 
 CREATE TABLE tags (
-  [id] int NOT NULL identity(1, 1) primary key,
-  [tag] nvarchar(150) NOT NULL,
-  [date] datetime2(0) NOT NULL,
-  [urltag] nvarchar(150) NOT NULL
-)  ;
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Tag_name] nvarchar(150) NOT NULL,
+  [Last_update_data] datetime2(0) NOT NULL,
+  [Tag_url] nvarchar(150) NOT NULL
+);
 
-
---
+---------------------------------------------------------
 -- Table structure for table `ads`
---
---
---DROP TABLE ads;
+
+--drop table ads;
 
 CREATE TABLE ads (
-  [id] int NOT NULL identity(1, 1) primary key,
-  [profile_id] int NOT NULL,
-  [category_id] int NOT NULL,
-  [name] nvarchar(100) NOT NULL,
-  [adress] nvarchar(100) NOT NULL,
-  [price] int NOT NULL,
-  [description] nvarchar(max) NOT NULL,
-  [images] nvarchar(max) NOT NULL,
-  [date] datetime2(0) NOT NULL,
-  [status] smallint NOT NULL
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Prof_id] int NOT NULL,
+  [Categ_id] int NOT NULL,
+  [Ad_name] nvarchar(100) NOT NULL,
+  [Adress] nvarchar(100) NOT NULL,
+  [Price] int NOT NULL,
+  [Description] nvarchar(max) NOT NULL,
+  [Images] nvarchar(max) NOT NULL,
+  [Last_update_data] datetime2(0) NOT NULL,
+  [Ad_creation_data] datetime2(0) NOT NULL,
+  [Status] binary NOT NULL,
+  [Ad_number] int not null
 
-  CONSTRAINT FK_categ_id foreign key ([category_id]) references category ([id]),
-  CONSTRAINT FK_prof_id  foreign key ([profile_id]) references profiles ([id])
-)  ;
+  CONSTRAINT FK_categ_id foreign key ([Categ_id]) references category ([id]),
+  CONSTRAINT FK_prof_id  foreign key ([Prof_id]) references profiles ([id])
+);
 
-
---
+---------------------------------------------------------
 -- Table structure for table `ads2tags`
---
 
---DROP TABLE ads2tags;
+--drop table ads2tags;
 
 CREATE TABLE ads2tags (
-  [ads_id] int NOT NULL,
-  [tag_id] int NOT NULL
+  [Ad_id] int NOT NULL,
+  [Tag_id] int NOT NULL
 
-  CONSTRAINT FK_ads_id foreign key ([ads_id]) references ads ([id]),
-  CONSTRAINT FK_tag_id  foreign key ([tag_id]) references tags ([id])
+  CONSTRAINT FK_ads_id foreign key ([Ad_id]) references ads ([id]),
+  CONSTRAINT FK_tag_id  foreign key ([Tag_id]) references tags ([id])
 
-)  ;
-
-
+);
