@@ -69,9 +69,15 @@ let sqlArrayTrees = [];
     //getChildren('https://www.olx.ua/zapchasti-dlya-transporta/')
     .then((xxx) => {
         //console.log(xxx);
-        const tree2db = require('./treetodb');
+        const tree2db = require('./treetodb2');
         tree2db.save(xxx);
     })
+
+
+// const tree2db = require('./treetodb2');
+// tree2db.save();
+
+
 
 // РЕКУРСИНВАЯ ФУНКЦИЯ пробегает по всему дому OLX
 // РЕКУРСИНВАЯ ФУНКЦИЯ пробегает по всему дому OLX

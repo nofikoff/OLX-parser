@@ -18,6 +18,9 @@ let con;
 let import002 = () => {
 
     con.request()
+        .query("INSERT into test2 (name) values ('папа')");
+
+    con.request()
         .query('select * from test2')
 
         .then(result => {
