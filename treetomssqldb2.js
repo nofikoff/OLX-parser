@@ -104,21 +104,21 @@ let import003 = (vectorAllCategories) => {
 
                             // пытаемся найти в бюазе ID родителя по его URL
                         } else if (vectorAllCategories[urlBranch].parent !== '') {
-                            //let sql = "SELECT * FROM `category` WHERE `url` = '"+vectorAllCategories[urlBranch].parent+"'";
                             let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[urlBranch].parent + "'";
-							//let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = " + vectorAllCategories[urlBranch].parent + "'";
-							console.log("sql=",sql);
-							//let sql = "SELECT * FROM category WHERE Categ_url = "+vectorAllCategories[urlBranch].parent";
+							
+							//console.log("sql=",sql);
+							
                             con.request()
 							.query(sql, function (err, result) {
-                                console.log("результат запроса:",result, result.recordset);
+                                //console.log("результат запроса:",result, result.recordset);
 								if (err) throw err;
                                 //if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
-									if (typeof result.recordset === 'undefined' || (result.recordset.length==0)) {
+								//console.log("recordset size =  ",result.recordset.length);
+								if ((typeof result.recordset === 'undefined') || (result.recordset.length==0)) {
                                     console.log("НЕ ВИЖУ родителя В БД", sql);
                                     parent_id = 0;
                                 } else {
-                                    console.log(sql, "Result: ", result.recordset[0].ID);
+                                    //console.log(sql, "Result: ", result.recordset[0].ID);
                                     cacheParentUrl2Id[vectorAllCategories[urlBranch].parent] = result.recordset[0].ID;
                                     //console.log("КЭШ ID родителя по адресу", cacheParentUrl2Id);
                                     parent_id = result.recordset[0].ID;
