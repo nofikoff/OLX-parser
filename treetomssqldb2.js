@@ -114,7 +114,7 @@ let import003 = (vectorAllCategories) => {
                                 console.log("результат запроса:",result, result.recordset);
 								if (err) throw err;
                                 //if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
-									if (typeof result.recordset === 'undefined') {
+									if (typeof result.recordset === 'undefined' || (result.recordset.length==0)) {
                                     console.log("НЕ ВИЖУ родителя В БД", sql);
                                     parent_id = 0;
                                 } else {
