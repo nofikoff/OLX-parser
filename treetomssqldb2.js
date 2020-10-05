@@ -105,18 +105,23 @@ let import003 = (vectorAllCategories) => {
                             // пытаемся найти в бюазе ID родителя по его URL
                         } else if (vectorAllCategories[urlBranch].parent !== '') {
                             //let sql = "SELECT * FROM `category` WHERE `url` = '"+vectorAllCategories[urlBranch].parent+"'";
-                            let sql = "SELECT * FROM category WHERE Categ_url = '" + vectorAllCategories[urlBranch].parent + "'";
+                            let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[urlBranch].parent + "'";
+							//let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = " + vectorAllCategories[urlBranch].parent + "'";
+							console.log("sql=",sql);
+							//let sql = "SELECT * FROM category WHERE Categ_url = "+vectorAllCategories[urlBranch].parent";
                             con.request()
 							.query(sql, function (err, result) {
-                                if (err) throw err;
-                                if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
+                                console.log("результат запроса:",result, result.recordset);
+								if (err) throw err;
+                                //if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
+									if (typeof result.recordset === 'undefined') {
                                     console.log("НЕ ВИЖУ родителя В БД", sql);
                                     parent_id = 0;
                                 } else {
-                                    console.log(sql, "Result: ", JSON.parse(JSON.stringify(result))[0].id);
-                                    cacheParentUrl2Id[vectorAllCategories[urlBranch].parent] = JSON.parse(JSON.stringify(result))[0].id;
+                                    console.log(sql, "Result: ", result.recordset[0].ID);
+                                    cacheParentUrl2Id[vectorAllCategories[urlBranch].parent] = result.recordset[0].ID;
                                     //console.log("КЭШ ID родителя по адресу", cacheParentUrl2Id);
-                                    parent_id = JSON.parse(JSON.stringify(result))[0].id;
+                                    parent_id = result.recordset[0].ID;
                                 }
 
                                 console.log('ВЫХОДИм родитель из БД достали', parent_id)
@@ -126,13 +131,14 @@ let import003 = (vectorAllCategories) => {
 
                         } else {
                             parent_id = 0;
+							console.log('родитель не найден, присваиваем 0 ', parent_id)
                             resolve(parent_id);
                         }
 
                         console.log("\n *** Массив кэша справочника родителей ***", cacheParentUrl2Id)
 
                     }).then((parent_id) => {
-                            console.log("ВТОРОЙ then Родитель найден", parent_id)
+                            console.log("ВТОРОЙ then Родитель определён ", parent_id)
                             let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[urlBranch].name + "', '" + urlBranch + "', '" + parent_id + "', GETDATE());";
                             con.request().query(sql, function (err, result) {
 
