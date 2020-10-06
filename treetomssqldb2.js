@@ -5,7 +5,7 @@ const sql = require('mssql')
 
 // кэш соотвествия адреса родителя его ID в БД
 let cacheParentUrl2Id = {};
-
+let problem_debug_urls_no_parents_db = [];
 const config = {
     /*server: 'localhost',
         authentication: {
@@ -43,7 +43,10 @@ let treetodb = {
                 our_connection = pool;
             })
             .then(() => import003(vectorAllCategories))
-        //.then(() => import001(vectorAllCategories))
+
+            .then(() => (
+                console.log(problem_debug_urls_no_parents_db, "ОТЧЕТ О НЕ СОХЪРАННЕЫХ УЗЛАХ")
+            ))
 
 
     }
@@ -67,7 +70,7 @@ let import002 = () => {
 let import003 = (vectorAllCategories) => {
     let parent_id = 0;
     let promises_sequences = [];
-    let problem_debug_urls_no_parents_db = [];
+
 
     //
     // проходим вектор vectorAllCategories в цикле!
@@ -80,7 +83,6 @@ let import003 = (vectorAllCategories) => {
     // INSERT URL ID родителя .....
 
     Object.keys(vectorAllCategories).forEach(
-
         (url_current_node) => {
 
             promises_sequences.push(
@@ -190,7 +192,6 @@ let import003 = (vectorAllCategories) => {
                     )
             )
 
-            console.log(problem_debug_urls_no_parents_db, "ОТЧЕТ О НЕ СОХЪРАННЕЫХ УЗЛАХ")
 
         })
 

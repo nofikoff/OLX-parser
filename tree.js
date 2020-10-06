@@ -52,7 +52,7 @@ const axios = require('axios');
 let sqlArrayTrees = [];
 // основноый вызов
 
-getChildren('https://www.olx.ua/zhitomir/')
+getChildren('https://www.olx.ua/kiev/')
 //getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
     .then((xxx) => {
         console.log("ПИШЕМ В БД2\n", xxx);
