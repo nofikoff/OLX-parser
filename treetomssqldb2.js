@@ -24,11 +24,11 @@ const config = {
 			trustedConnection: true,
             database: 'olx'  //update me
         }*/
-		user: 'olx',
+    user: 'olx',
     password: 'Xxl5124315',
-	//password: 'masterkey',
+    //password: 'masterkey',
     //server: 'localhost',
-server: 'flat.pogonyalo.com',	
+    server: 'flat.pogonyalo.com',
     database: 'olx',
 }
 
@@ -67,8 +67,9 @@ let import002 = () => {
 let import003 = (vectorAllCategories) => {
     let parent_id = 0;
     let promises_sequences = [];
+    let problem_debug_urls_no_parents_db = [];
 
-   //
+    //
     // проходим вектор vectorAllCategories в цикле!
     // элемент -  URL, NAME, PARENTURL (дети не нужны)
     // !!!! PARENTURL НЕ определеям динамически из URL опредеить нельзя
@@ -77,8 +78,9 @@ let import003 = (vectorAllCategories) => {
     // если PARENTURL === '' то ID родителя времено ставим 0
     // кэшируем справочник PARENTURL <=> ID
     // INSERT URL ID родителя .....
-	
-	Object.keys(vectorAllCategories).forEach(
+
+    Object.keys(vectorAllCategories).forEach(
+
         (url_current_node) => {
 
             promises_sequences.push(
@@ -96,62 +98,103 @@ let import003 = (vectorAllCategories) => {
                             resolve(parent_id);
 
                             // пытаемся найти в бюазе ID родителя по его URL
-                        }
-                        else if (vectorAllCategories[url_current_node].parent !== '') {
+                        } else if (vectorAllCategories[url_current_node].parent !== '') {
                             let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[url_current_node].parent + "'";
-							
-							//console.log("sql=",sql);
-							
+
+                            //console.log("sql=",sql);
+
                             our_connection.request()
-							.query(sql, function (err, result) {
-                                //console.log("результат запроса:",result, result.recordset);
-								if (err) throw err;
-                                //if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
-								//console.log("recordset size =  ",result.recordset.length);
-								if ((typeof result.recordset === 'undefined') || (result.recordset.length==0)) {
-                                    console.log("НЕ ВИЖУ родителя В БД", sql);
-                                    parent_id = 0;
-                                } else {
-                                    //console.log(sql, "Result: ", result.recordset[0].ID);
-                                    cacheParentUrl2Id[vectorAllCategories[url_current_node].parent] = result.recordset[0].ID;
-                                    //console.log("КЭШ ID родителя по адресу", cacheParentUrl2Id);
-                                    parent_id = result.recordset[0].ID;
-                                }
+                                .query(sql, function (err, result) {
+                                    //console.log("результат запроса:",result, result.recordset);
+                                    if (err) {
+                                        console.log('ошибка базы', err)
+                                        throw err;
+                                    }
+                                    //if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
+                                    //console.log("recordset size =  ",result.recordset.length);
 
-                                console.log('ВЫХОДИм родитель из БД достали', parent_id)
-                                resolve(parent_id);
+                                    //        "recordsets": [[{
+                                    //                     "student_firstname": "Jonah                ",
+                                    //                     "student_lastname": "Hill                    "
+                                    //                 }, {
+                                    //                     "student_firstname": "Debra                   ",
+                                    //                     "student_lastname": "Smith               "
+                                    //                 }
+                                    //             ]],
+                                    //         "recordset": [{
+                                    //                 "student_firstname": "Jonah                ",
+                                    //                 "student_lastname": "Hill                    "
+                                    //             }, {
+                                    //                 "student_firstname": "Debra                   ",
+                                    //                 "student_lastname": "Smith               "
+                                    //             }
+                                    //         ],
+                                    //         "output": {},
+                                    //         "rowsAffected": [2]
+                                    //     }
+                                    if (
+                                        result.recordset.length == 0
+                                    ) {
+                                        console.log("НЕ ВИЖУ родителя В БД", sql);
+                                        // блокируем текущзйи адрес
+                                        parent_id = -1;
 
-                            });
+                                        // отчет
+                                        problem_debug_urls_no_parents_db[url_current_node] =
+                                            {
+                                                parent: vectorAllCategories[url_current_node].parent,
+                                                sql: sql
+                                            }
+
+                                    } else {
+                                        //console.log(sql, "Result: ", result.recordset[0].ID);
+                                        cacheParentUrl2Id[vectorAllCategories[url_current_node].parent] = result.recordset[0].ID;
+                                        //console.log("КЭШ ID родителя по адресу", cacheParentUrl2Id);
+                                        parent_id = result.recordset[0].ID;
+                                    }
+
+                                    console.log('ВЫХОДИм родитель из БД достали', parent_id)
+                                    resolve(parent_id);
+
+                                });
 
                         } else {
                             parent_id = 0;
-							console.log('родитель не найден, присваиваем 0 ', parent_id)
+                            console.log('адрес родителя не задан, присваиваем 0 по дефолту', parent_id)
                             resolve(parent_id);
                         }
 
                         console.log("\n *** Массив кэша справочника родителей ***", cacheParentUrl2Id)
 
                     }).then((parent_id) => {
-                            console.log("ВТОРОЙ then Родитель определён - сохраняем текущий узел", parent_id)
-                            let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[url_current_node].name + "', '" + url_current_node + "', '" + parent_id + "', GETDATE());";
-                            our_connection.request().query(sql, function (err, result) {
 
-                                // if (typeof result.insertId !== "undefined")
-                                //     cacheParentUrl2Id[url_current_node] = result.insertId;
-                                //  if (err.code !== 'ER_DUP_ENTRY') {
-                                // //     // еси найдешь inserted
-                                //      cacheParentUrl2Id[url_current_node] = result.insertId;
-                                // //
-                                //  }
-                            });
+                            // если ID родитедя определен и он не -1
+                            if (parent_id !== -1) {
+                                console.log("ВТОРОЙ then Родитель определён - сохраняем текущий узел", parent_id)
+                                let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[url_current_node].name + "', '" + url_current_node + "', '" + parent_id + "', GETDATE());";
+                                our_connection.request().query(sql, function (err, result) {
+
+                                    // if (typeof result.insertId !== "undefined")
+                                    //     cacheParentUrl2Id[url_current_node] = result.insertId;
+                                    //  if (err.code !== 'ER_DUP_ENTRY') {
+                                    // //     // еси найдешь inserted
+                                    //      cacheParentUrl2Id[url_current_node] = result.insertId;
+                                    // //
+                                    //  }
+                                });
+                            }
 
 
                             console.log(sql + "\n\n\n")
                         }
                     )
             )
-            //КОНЕЦ ЦИКЛА
-        });
+
+            console.log(problem_debug_urls_no_parents_db, "ОТЧЕТ О НЕ СОХЪРАННЕЫХ УЗЛАХ")
+
+        })
+
+    ;
 
 
     (async(function testingAsyncAwait() {
@@ -159,8 +202,7 @@ let import003 = (vectorAllCategories) => {
             await(fn());
         }
     }))();
-	
-    
+
 
 }
 
