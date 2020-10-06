@@ -52,8 +52,8 @@ const axios = require('axios');
 let sqlArrayTrees = [];
 // основноый вызов
 
-getChildren('https://www.olx.ua/kiev/')
-//getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
+getChildren('https://www.olx.ua/odessa/')
+    //getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
     .then((xxx) => {
         console.log("ПИШЕМ В БД2\n", xxx);
         const tree2db = require('./treetomssqldb2');
@@ -92,8 +92,21 @@ function getChildren(url_current_node, urlParent = '') {
     ).catch(_error => {
         console.log('ДАННЫХ НЕТ axios вернул ошибку \n' + url_current_node);
         // контент пустой
+        setTimeout(() => console.log("ЗАТАИМСЯ !!!! 30 сек "), 30000)
         return '';
     }).then(($) => {
+
+        let isFunction = function (o) {
+            return Function.prototype.isPrototypeOf(o);
+        };
+
+        // если отвалился Cherios
+        // выше catch может сюда передать пустое значение
+        if (!isFunction($)) {
+            console.log("Черио отвалился - $ не функция")
+            return sqlArrayTrees;
+        }
+
         // инициализация - сначала пустой массив -
         // узел сохраняем в вектор обьект, этот обьект позже передается в базу
         sqlArrayTrees[url_current_node] = {

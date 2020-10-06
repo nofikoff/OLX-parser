@@ -1,0 +1,11 @@
+﻿var dt_pr = text.Dat_prof = $('.user-since').text().trim();
+ console.log(dt_pr);
+ moment.locale('ru');
+ 
+ let q = dt_pr.substring(9,13); 
+ console.log(q);
+ 
+ var x = moment().set('month', q);
+ console.log(x); 
+ 
+ console.log(moment([dt_pr.substring(dt_pr.length - 4), x.month()]).format("YYYY-MM"));

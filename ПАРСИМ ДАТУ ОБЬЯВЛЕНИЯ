@@ -1,0 +1,32 @@
+﻿
+                // data
+                var str = text.Dat = $('.offer-bottombar__item > em > strong').text().trim();
+                console.log(str);
+
+
+
+
+               // var str = 'в 14:12, 27 февраля 2020';
+
+                const moment = require('moment');
+
+                                // перед тем как пользоваться нужно установить - npm i moment 
+                                // and write const moment = require('moment');
+                                //https://momentjs.com/docs/#/i18n/
+                moment.locale('ru'); 
+                // console.log(moment.months(moment));
+                let p = str.substring(12,20);  
+                            
+
+                // выводит месяц
+                //  console.log(moment().set('month', p));
+                //  console.log(moment().get('month'));
+                
+                var a = moment().set('month', p);
+                //console.log(a.month()+1); 
+                console.log(moment([str.substring(str.length - 4), a.month(), str.substring(9,11) ]).format("YYYY-MM-DD"));
+                console.log(str.substring(2,7));
+                
+
+
+
