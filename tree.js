@@ -2,17 +2,65 @@ const cheerio = require('cheerio');
 const axios = require('axios');
 
 
+/** пример sqlArrayTrees
+ * [
+ 'https://www.olx.ua/zhivotnye/ivano-frankovsk/': {
+    chldr: [
+      'https://www.olx.ua/zhivotnye/besplatno-zhivotnye-i-vyazka/ivano-frankovsk/': 'Бесплатно (животные и вязка)',
+      'https://www.olx.ua/zhivotnye/sobaki/ivano-frankovsk/': 'Собаки',
+      'https://www.olx.ua/zhivotnye/koshki/ivano-frankovsk/': 'Кошки',
+      'https://www.olx.ua/zhivotnye/akvariumnye-rybki/ivano-frankovsk/': 'Аквариумистика',
+      'https://www.olx.ua/zhivotnye/ptitsy/ivano-frankovsk/': 'Птицы',
+      'https://www.olx.ua/zhivotnye/gryzuny/ivano-frankovsk/': 'Грызуны',
+      'https://www.olx.ua/zhivotnye/selskohozyaystvennye-zhivotnye/ivano-frankovsk/': 'Сельхоз животные',
+      'https://www.olx.ua/zhivotnye/reptilii/ivano-frankovsk/': 'Рептилии',
+      'https://www.olx.ua/zhivotnye/drugie-zhivotnye/ivano-frankovsk/': 'Другие животные',
+      'https://www.olx.ua/zhivotnye/tovary-dlya-zhivotnyh/ivano-frankovsk/': 'Зоотовары',
+      'https://www.olx.ua/zhivotnye/vyazka/ivano-frankovsk/': 'Вязка',
+      'https://www.olx.ua/zhivotnye/byuro-nahodok/ivano-frankovsk/': 'Бюро находок'
+    ],
+    name: 'Продажа домашних животных Ивано-Франковск',
+    parent: 'https://www.olx.ua/zhivotnye/'
+  },
+ 'https://www.olx.ua/zhivotnye/byuro-nahodok/ivano-frankovsk/': {
+    chldr: [],
+    name: 'Объявления о потерянных животных, документах, вещах Ивано-Франковск.',
+    parent: 'https://www.olx.ua/zhivotnye/ivano-frankovsk/'
+  },
+ 'https://www.olx.ua/zhivotnye/besplatno-zhivotnye-i-vyazka/ivano-frankovsk/': {
+    chldr: [],
+    name: 'Животные даром и бесплатная вязка Ивано-Франковск',
+    parent: 'https://www.olx.ua/zhivotnye/ivano-frankovsk/'
+  },
+ 'https://www.olx.ua/zhivotnye/vyazka/ivano-frankovsk/': {
+    chldr: [],
+    name: 'Вязка животных Ивано-Франковск',
+    parent: 'https://www.olx.ua/zhivotnye/ivano-frankovsk/'
+  },
+ 'https://www.olx.ua/zhivotnye/akvariumnye-rybki/ivano-frankovsk/': {
+    chldr: [],
+    name: 'Продажа рыбок Ивано-Франковск',
+    parent: 'https://www.olx.ua/zhivotnye/ivano-frankovsk/'
+  },
+ 'https://www.olx.ua/zhivotnye/selskohozyaystvennye-zhivotnye/ivano-frankovsk/': {
+    chldr: [],
+    name: 'Продажа сельскохозяйственных животных Ивано-Франковск - ',
+    parent: 'https://www.olx.ua/zhivotnye/ivano-frankovsk/'
+  },
+ */
+
 let sqlArrayTrees = [];
 // основноый вызов
 
-getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
+getChildren('https://www.olx.ua/zhitomir/')
+//getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
     .then((xxx) => {
         console.log("ПИШЕМ В БД2\n", xxx);
         const tree2db = require('./treetomssqldb2');
         tree2db.save(xxx);
     })
 
-function getChildren(url_current_node) {
+function getChildren(url_current_node, urlParent = '') {
 
     return axios.get(url_current_node,
         {
@@ -48,7 +96,13 @@ function getChildren(url_current_node) {
     }).then(($) => {
         // инициализация - сначала пустой массив -
         // узел сохраняем в вектор обьект, этот обьект позже передается в базу
-        sqlArrayTrees[url_current_node] = [];
+        sqlArrayTrees[url_current_node] = {
+            chldr: [],
+            name: $('h1').text(),
+            parent: urlParent,
+        }
+
+
         console.log("УЗЕЛ", url_current_node)
         // выходим - ДЕТЕЙ НЕТ
         if ($('a.topLink').length === 0) {
@@ -57,11 +111,11 @@ function getChildren(url_current_node) {
         } else {
 
             $('div#topLink a.topLink').each((idx, elem) => {
-                let link = $(elem).attr('href');
+                let urlChildren = $(elem).attr('href');
                 let title = $(elem).find('span.link').text();
                 // если не пустой заголовок
                 if (typeof title === 'string') {
-                    sqlArrayTrees[url_current_node][link] = title;
+                    sqlArrayTrees[url_current_node].chldr[urlChildren] = title;
                 }
             })
         }
@@ -70,11 +124,11 @@ function getChildren(url_current_node) {
         .then(
             () => {
                 // еси надо нырнуть глбуже
-                if (Object.keys(sqlArrayTrees[url_current_node]).length) {
+                if (Object.keys(sqlArrayTrees[url_current_node].chldr).length) {
                     let promises = [];
-                    for (let key in sqlArrayTrees[url_current_node]) {
-                        promises.push(getChildren(key));
-                        // выходим если ссылки на ads не обнаружены
+                    // рекурсия
+                    for (let url_children in sqlArrayTrees[url_current_node].chldr) {
+                        promises.push(getChildren(url_children, url_current_node));
                     }
                     return Promise.all(promises);
                 }

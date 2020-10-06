@@ -32,13 +32,7 @@ server: 'flat.pogonyalo.com',
     database: 'olx',
 }
 
-  /*  const connect = new Connection(config);
-    connect.on('connect', function(err) {
-        // If no error, then good to proceed.
-        console.log("***********WOW!!!!!! Connected!!!**********");
-    });*/
-
-let con;
+let our_connection;
 // промис ДБ
 let treetodb = {
     save: function (vectorAllCategories) {
@@ -46,7 +40,7 @@ let treetodb = {
 
         sql.connect(config)
             .then((pool) => {
-                con = pool;
+                our_connection = pool;
             })
             .then(() => import003(vectorAllCategories))
         //.then(() => import001(vectorAllCategories))
@@ -58,7 +52,7 @@ let treetodb = {
 // промис добавления в БД
 let import002 = () => {
 
-    con.request()
+    our_connection.request()
         .query('select * from test2')
 
         .then(result => {
@@ -74,19 +68,18 @@ let import003 = (vectorAllCategories) => {
     let parent_id = 0;
     let promises_sequences = [];
 
-
-    console.log("Start Insert");
-    //
+   //
     // проходим вектор vectorAllCategories в цикле!
     // элемент -  URL, NAME, PARENTURL (дети не нужны)
-    // !!!! PARENTURL НЕ определеям динамически из URL опредеить нельзя т.к город подстаялется всегда у родителей тоже
+    // !!!! PARENTURL НЕ определеям динамически из URL опредеить нельзя
+    // т.к город подстаялется всегда у родителей тоже
     // определеяем ID родителя по PARENTURL из БД,
     // если PARENTURL === '' то ID родителя времено ставим 0
     // кэшируем справочник PARENTURL <=> ID
     // INSERT URL ID родителя .....
 	
 	Object.keys(vectorAllCategories).forEach(
-        (urlBranch) => {
+        (url_current_node) => {
 
             promises_sequences.push(
                 () =>
@@ -95,20 +88,21 @@ let import003 = (vectorAllCategories) => {
                     /** определим ID Родителя по его адресу **/
                     new Promise(function (resolve, reject) {
 
-                        console.log("\nВЕТКА", urlBranch)
+                        console.log("\nВЕТКА", url_current_node)
                         // в кэше есть пара адрес - ID?
-                        if (cacheParentUrl2Id[vectorAllCategories[urlBranch].parent] > 0) {
-                            parent_id = cacheParentUrl2Id[vectorAllCategories[urlBranch].parent];
+                        if (cacheParentUrl2Id[vectorAllCategories[url_current_node].parent] > 0) {
+                            parent_id = cacheParentUrl2Id[vectorAllCategories[url_current_node].parent];
                             console.log('ВЫХОДИм родитель из КЭША достали', parent_id)
                             resolve(parent_id);
 
                             // пытаемся найти в бюазе ID родителя по его URL
-                        } else if (vectorAllCategories[urlBranch].parent !== '') {
-                            let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[urlBranch].parent + "'";
+                        }
+                        else if (vectorAllCategories[url_current_node].parent !== '') {
+                            let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[url_current_node].parent + "'";
 							
 							//console.log("sql=",sql);
 							
-                            con.request()
+                            our_connection.request()
 							.query(sql, function (err, result) {
                                 //console.log("результат запроса:",result, result.recordset);
 								if (err) throw err;
@@ -119,7 +113,7 @@ let import003 = (vectorAllCategories) => {
                                     parent_id = 0;
                                 } else {
                                     //console.log(sql, "Result: ", result.recordset[0].ID);
-                                    cacheParentUrl2Id[vectorAllCategories[urlBranch].parent] = result.recordset[0].ID;
+                                    cacheParentUrl2Id[vectorAllCategories[url_current_node].parent] = result.recordset[0].ID;
                                     //console.log("КЭШ ID родителя по адресу", cacheParentUrl2Id);
                                     parent_id = result.recordset[0].ID;
                                 }
@@ -138,15 +132,15 @@ let import003 = (vectorAllCategories) => {
                         console.log("\n *** Массив кэша справочника родителей ***", cacheParentUrl2Id)
 
                     }).then((parent_id) => {
-                            console.log("ВТОРОЙ then Родитель определён ", parent_id)
-                            let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[urlBranch].name + "', '" + urlBranch + "', '" + parent_id + "', GETDATE());";
-                            con.request().query(sql, function (err, result) {
+                            console.log("ВТОРОЙ then Родитель определён - сохраняем текущий узел", parent_id)
+                            let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[url_current_node].name + "', '" + url_current_node + "', '" + parent_id + "', GETDATE());";
+                            our_connection.request().query(sql, function (err, result) {
 
                                 // if (typeof result.insertId !== "undefined")
-                                //     cacheParentUrl2Id[urlBranch] = result.insertId;
+                                //     cacheParentUrl2Id[url_current_node] = result.insertId;
                                 //  if (err.code !== 'ER_DUP_ENTRY') {
                                 // //     // еси найдешь inserted
-                                //      cacheParentUrl2Id[urlBranch] = result.insertId;
+                                //      cacheParentUrl2Id[url_current_node] = result.insertId;
                                 // //
                                 //  }
                             });
@@ -207,7 +201,7 @@ let import001 = (vectorAllCategories) => {
                         } else if (vectorAllCategories[urlBranch].parent !== '') {
                             //let sql = "SELECT * FROM `category` WHERE `url` = '"+vectorAllCategories[urlBranch].parent+"'";
                             let sql = "SELECT * FROM `category` WHERE `url` = '" + vectorAllCategories[urlBranch].parent + "'";
-                            con.query(sql, function (err, result) {
+                            our_connection.query(sql, function (err, result) {
                                 if (err) throw err;
                                 if (typeof JSON.parse(JSON.stringify(result))[0] === 'undefined') {
                                     console.log("НЕ ВИЖУ родителя В БД", sql);
@@ -234,7 +228,7 @@ let import001 = (vectorAllCategories) => {
                     }).then((parent_id) => {
                             console.log("ВТОРОЙ then Родитель найден", parent_id)
                             let sql = "INSERT INTO `category` (`id`, `name`, `url`, `parent`, `date`) VALUES (NULL, '" + vectorAllCategories[urlBranch].name + "', '" + urlBranch + "', '" + parent_id + "', NOW());";
-                            con.query(sql, function (err, result) {
+                            our_connection.query(sql, function (err, result) {
 
                                 // if (typeof result.insertId !== "undefined")
                                 //     cacheParentUrl2Id[urlBranch] = result.insertId;
