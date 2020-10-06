@@ -10,3 +10,14 @@ treetomssqldb2.js
 БД
 - решили все URL category, ads, profles хранить в отдельной таблице
 
+ЭТАПЫ
+- branch.js дописать чтобы по таблице categories брал и собирал ads в таблицу urls
+
+- ads.js / profile.js
+взять один тестовый ads и попытаться его сохранить
+учитывая foreign keys category_id, profile_id
+учитывая что urk_ads хранится во внешней таблице
+
+- переделдать tree.js с учетом того что url_category будет храниться в отдельной таблице
+
+
