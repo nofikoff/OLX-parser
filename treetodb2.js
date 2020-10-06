@@ -1,6 +1,5 @@
 let async = require('asyncawait/async');
 let await = require('asyncawait/await');
-const tedious = require("tedious");
 const sql = require('mssql')
 
 const config = {
@@ -12,13 +11,29 @@ const config = {
 
 let con;
 // промис ДБ
+// методы модуля
+// методы модуля
+let treetodb = {
+    save: function (vectorAllCategories) {
+        // последовательность промисов
+
+        sql.connect(config)
+            .then((pool) => {
+                con = pool;
+            })
+            .then(() => import002())
+        //.then(() => import001(vectorAllCategories))
+
+
+    }
+}
 
 
 // промис добавления в БД
 let import002 = () => {
 
     con.request()
-        .query("INSERT into test2 (name) values ('папа')");
+        .query("INSERT into test2 (name) values ('собака')");
 
     con.request()
         .query('select * from test2')
@@ -125,22 +140,6 @@ let import001 = (vectorAllCategories) => {
 
 };
 
-// методы модуля
-// методы модуля
-let treetodb = {
-    save: function (vectorAllCategories) {
-        // последовательность промисов
-
-        sql.connect(config)
-            .then((pool) => {
-                con = pool;
-            })
-            .then(() => import002())
-        //.then(() => import001(vectorAllCategories))
-
-
-    }
-}
 
 module.exports = treetodb
 
