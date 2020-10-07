@@ -26,6 +26,7 @@ treetomssqldb2.js
 
 ЮРА, ЖЕНЯ
 profile.js
+![Схема работы profile.js](https://github.com/nofikoff/OLX-parser/blob/master/photo_2020-10-06_21-06-53.jpg)
 
 
 TODO !!!!  переделдать tree.js с учетом того что url_category будет храниться в отдельной таблице
