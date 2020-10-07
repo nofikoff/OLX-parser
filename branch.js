@@ -3,43 +3,40 @@ const axios = require("axios");
 const sql = require("mssql");
 const { result } = require("asyncawait/async");
 
-
 let config = {
-    user: 'olx',
-    password: 'Xxl5124315',
-    server: 'flat.pogonyalo.com', 
-    database: 'olx' 
+  user: "olx",
+  password: "Xxl5124315",
+  server: "flat.pogonyalo.com",
+  database: "olx",
 };
 
-sql.on('error', err => {
+sql.on("error", (err) => {
   // ... error handler
-})
+});
 
-
+//let categoryUrl = "https://www.olx.ua/zapchasti-dlya-transporta/shiny-diski-i-kolesa/zhitomir/";
 let sqlArrayBrenchs = [];
 let pagerMax;
 // основноый вызов
-getBranchCall(
-  "https://www.olx.ua/zapchasti-dlya-transporta/shiny-diski-i-kolesa/zhitomir/"
-).then((branch) => {
-  
-  for (const [key, value] of Object.entries(branch)) {
-    console.log(`${key}: ${value}`);
-    let inserToUrl_qwery = "use olx insert into urls values (1 ,  GETDATE(), '" + key + "', 2);";
-    sql.connect(config)
-    .then(pool => {
-      return pool.request()
-          .query(inserToUrl_qwery) //Пишем в базу
-      })
-      .then(result => {
-          console.log(result.recordset);
-      })
-      .catch(err => {
-          // ... error checks
-      });
-  }
-  
-});
+let caller = {
+  save: function (categoryUrl) {
+    getBranchCall(categoryUrl).then((branch) => {
+      for (const [key, value] of Object.entries(branch)) {
+        console.log(`${key}: ${value}`);
+        let inserToUrl_qwery =
+          "use olx insert into urls values (1 ,  GETDATE(), '" + key + "', 2);";
+        sql
+          .connect(config)
+          .then((pool) => {
+            return pool.request().query(inserToUrl_qwery); //Пишем в базу
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
+  },
+};
 
 async function getBranchCall(url) {
   // нулевой шаг
@@ -124,3 +121,5 @@ function getBranch(url) {
       return 0;
     });
 }
+
+module.exports = caller;
