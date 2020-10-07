@@ -15,24 +15,6 @@ sql.on('error', err => {
   // ... error handler
 })
 
-let categories = [];
-
-// function selectCategories(){
-//   sql.connect(config)
-//     .then(pool => {
-//      return pool.request()
-//             .query('select * from [dbo].[category]')
-//     })
-//     .then(result => {
-//         console.log(result.recordset);
-//         return result.recordset;
-//     })
-//     .catch(err => {
-//         // ... error checks
-//     });
-// }
-// categories = selectCategories();
-//  console.log(categories);
 
 let sqlArrayBrenchs = [];
 let pagerMax;
