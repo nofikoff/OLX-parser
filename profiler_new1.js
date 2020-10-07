@@ -26,7 +26,7 @@ let may_url =  withoutLastChunk + "html"
 getAds(may_url)
 .then((xxx) => {
     console.log("ура ",xxx);
-    const tree2db = require('./profil_new1');
+    const tree2db = require('./profiltodb');
     tree2db.save(xxx);
 })
 
