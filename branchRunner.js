@@ -1,3 +1,41 @@
+const branchToDB = require("./branch.js");
+const sql = require("mssql");
+let config = {
+  user: "olx",
+  password: "Xxl5124315",
+  server: "flat.pogonyalo.com",
+  database: "olx",
+};
 
-const branchToDB = require('./branch.js');
-branchToDB.save("https://www.olx.ua/zapchasti-dlya-transporta/shiny-diski-i-kolesa/zhitomir/");
+sql.on("error", (err) => {
+  // ... error handler
+});
+
+
+function selectCategories(){
+  return sql.connect(config)
+    .then(pool => {
+     return pool.request()
+      .query('select * from [category]')
+    })
+    .then(result => result.recordset)
+    .catch(err => {
+      //console.log(err);
+    });
+}
+ selectCategories().then(
+   (categories)=>{
+    console.log("Колличество категорий = ", Object.keys(categories).length);
+    return categories
+    }
+ ).then( 
+   (categories)=>{
+     if(typeof categories!=='undefined'){
+        for (let [key, value] of Object.entries(categories)) {
+          console.log(value.Categ_url);
+          branchToDB.save(value.Categ_url);
+      }
+    }
+  }
+ );
+

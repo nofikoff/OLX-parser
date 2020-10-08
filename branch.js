@@ -1,7 +1,6 @@
 ﻿const cheerio = require("cheerio");
 const axios = require("axios");
 const sql = require("mssql");
-const { result } = require("asyncawait/async");
 
 let config = {
   user: "olx",
@@ -24,7 +23,8 @@ let caller = {
       for (const [key, value] of Object.entries(branch)) {
         console.log(`${key}: ${value}`);
         let inserToUrl_qwery =
-          "use olx insert into urls values (1 ,  GETDATE(), '" + key + "', 2);";
+          "use olx insert into urls values (1 ,  GETDATE(), '" + key + "');";
+          console.log(inserToUrl_qwery);
         sql
           .connect(config)
           .then((pool) => {
@@ -105,12 +105,13 @@ function getBranch(url) {
 
       $("a.detailsLink").each((idx, elem) => {
         let link = $(elem).attr("href");
-        let title = $(elem).find("img").attr("alt");
+       // let title = $(elem).find("img").attr("alt");
         //
         link = link.split("html")[0] + "html";
         //console.log(title, link);
         // если не пустой аголовок
-        if (typeof title === "string") sqlArrayBrenchs[link] = title;
+        //if (typeof title === "string") 
+        sqlArrayBrenchs[title] = title;
       });
       // следующая страница пагинации
       return 1;
