@@ -17,9 +17,9 @@ let sqlArrayTrees;
 
 
 // сокращения url
-//var url_oll ="https://www.olx.ua/obyavlenie/mercedes-benz-vito-2006-2-2-diesel-IDJqgqd.html#582b4ef667;promoted";
+//var url_oll ="https://www.olx.ua/obyavlenie/shikarniy-budinok-na-mar-yanvts-IDJsiCT.html#66e75f278a";
+var url_oll ="https://www.olx.ua/obyavlenie/mercedes-benz-vito-2006-2-2-diesel-IDJqgqd.html#582b4ef667;promoted";
 //var url_oll ="https://www.olx.ua/obyavlenie/kurtka-puhovik-novaya-zimnyaya-fila-puma-IDFwPTL.html?sd=1#2d12d0e86b";
-var url_oll ="https://www.olx.ua/obyavlenie/kvartira-posutochno-odnokomnatnaya-s-evroremontom-v-tsentre-goroda-IDDr3Q7.html#7c0b3f0da7";
 var withoutLastChunk = url_oll.slice(0, url_oll.lastIndexOf("html"));
 let may_url =  withoutLastChunk + "html"
 
@@ -27,8 +27,15 @@ getAds(may_url)
 .then((xxx) => {
     console.log("ура ",xxx);
     const tree2db = require('./profiltodb');
-    tree2db.save(xxx);
+   return  tree2db.save(xxx);
+     //tree2db.save(xxx);
 })
+.then(
+    (ID)=>{
+        console.log("URL_ID ", ID);
+        
+    }
+)
 
 /**
  * В функции main размещаем код, который
@@ -170,204 +177,18 @@ async function getAds(url) {
 
 
 
-                sqlArrayTrees = {
-                    Reg_date: Reg_date,
-                    Prof_url: Prof_url,
-                    Prof_name: Prof_name
-                    
-                };
-                console.log("sqlArrayTrees --- " , sqlArrayTrees);
-                
-
-
-
-                // перед тем как пользоваться нужно установить - npm i moment 
-                // and write const moment = require('moment');
-                //https://momentjs.com/docs/#/i18n/
-            //     moment.locale('ru'); 
-            //    // console.log(moment.months(moment));
-            //     let p = "января";  
-                           
-           
-            //     // выводит месяц
-            //     //  console.log(moment().set('month', p));
-            //     //  console.log(moment().get('month'));
-                
-            //     var a = moment().set('month', p);
-            //     //console.log(a.month()+1);
-                
-
-            //     console.log(moment([2012, a.month()+1, 10 ]).format("YYY-MM-DD"));
-
-
-                //  moment.updateLocale('ru', {
-                //     months : [ "января",	"февраля",	"марта", "апреля", "майя",
-                //     "июня",	"июля", "августа" ,"сентября", "октября", "ноября",	"декабря" 
-                //     ]                
-                // })
-                //console.log(moment.version)
-                // for (let i = 0; i < moment.months().length; i++) {
-                //     //console.log(p);
-                //    // console.log(moment.months().length);
-                //    // const element = array[i];
-                //    if (m [i] === p) {
-                //        //i++;
-                //        console.log(p + "2");
-                //     console.log('0' + ++i); 
-                //     console.log(moment.months(--i));
-
-                //     break;  
-
-                //    }else{
-                //        i++;                       
-                //    }    
-                    
-                // }
-                
-
-
-
-
-                // text.prof = [];
-                //  $(' ul.offer-user__actions > h4 > a').each((idx, element) => {
-                //     let prof_href = $(elem).attr('href');
-                //     text.prof.push(prof_href);
-                // })
-                // text.tegsUP = [];
-                // $('.middle > ul >li > a').each((idx, elem) => {
-                //     let title = $(elem).attr('href');
-                //     // пушим в массив
-                //     text.tegsUP.push(title);
-                // })
-                // console.log(text.tegsUP[3]);
-                //  //sql = `SELECT * FROM category where url = "https://www.olx.ua/nedvizhimost/posutochno-pochasovo/posutochno-pochasovo-kvartiry/zhitomir/"`;
-                //  sql = `SELECT * FROM category where url = "${text.tegsUP[3]}"`;
-                // console.log(sql);
-                
-                // connection.query(sql, function(err, results) {
-                //     if(err) console.log(err);
-                //     console.lonode
-
-
                
-                 
-                
-
-                // (async(function testingAsyncAwait() {
-                //     for (let fn of text.tegsUP) {
-                //         await(fn(
-                            
-                //             //connection.end()
-                //         ));
-                //     }
-                // }))();
-
-
-
-
-
-
-
-                // text.li = [];
-                // //$('middle').each((idx, elem) =>{
-                // $('middle').find('li').each(function (index, element){
-                // let lil = $(element).attr('.inline');
-                // text.li.push(lil);
-                // })
-
-                // убираем лишние не цифры в цене побелы и пр
-                // text.price = $('.pricelabel__value').text().replace(/\D+/g, '');
-                // text.desc = $('#textContent').text().trim();
-                
-
-                // text.images = [];
-                // $('ul#descGallery > li > a').each((idx, elem) => {
-                //     let title = $(elem).attr('href');
-                //     // пушим в массив
-                //     text.images.push(title);
-                // })
-
-
-                // text.hashTags = [];
-                // $('ul.offer-details').find('li').each(function (index, element) {
-
-                //     // console.log($(element).find('.offer-details__name').text())
-                //     // console.log($(element).find('.offer-details__value').text())
-
-                //     if ($(element).find('.offer-details__value--multiple').length > 0) {
-                //         $(element).find('.offer-details__value').find('a').each(function (index2, element2) {
-                //                 let val = $(element2).text().toLowerCase();
-                //                 // нулевые пропускаем
-                //                 if (val !== '')
-                //                     text.hashTags.push([
-                //                         $(element)
-                //                             .find('.offer-details__name')
-                //                             .text().toLowerCase(),
-                //                         val
-                //                     ]);
-                //             }
-                //         )
-                //     } else {
-                //         let val = $(element).find('.offer-details__value').text().toLowerCase();
-                //         // нулевые пропускаем
-                //         if (val !== '')
-                //             text.hashTags.push([
-                //                 $(element).find('.offer-details__name').text().toLowerCase(),
-                //                 val
-                //             ]);
-
-                //     }
-                  
-
-                // });
-                
-        
-
-                
-            // return $;
-
             }
             
-        ).then(() => {
-                    return sqlArrayTrees;
-                })
-    
+        )
 
-    //     .then(($) => {
-            
-    //         console.log("hlop - hlop - hlop - hlop - hlop - hlop - hlop - hlop - hlop - hlop - hlop - hlop");
-            
-
-    //         text.prof = [];
-    //          $(' ul.offer-user__actions > h4 > a').each((idx, element) => {
-    //             let prof_href = $(elem).attr('href');
-    //             text.prof.push(prof_href);
-    //         })
-    //         // text.tegsUP = [];
-    //         // $('.middle > ul >li > a').each((idx, elem) => {
-    //         //     let title = $(elem).attr('href');
-    //         //     // пушим в массив
-    //         //     text.tegsUP.push(title);
-    //         // })
-    //         // console.log(text.tegsUP[3]);
-    //         //  //sql = `SELECT * FROM category where url = "https://www.olx.ua/nedvizhimost/posutochno-pochasovo/posutochno-pochasovo-kvartiry/zhitomir/"`;
-    //         //  sql = `SELECT * FROM category where url = "${text.tegsUP[3]}"`;
-    //         // console.log(sql);
-            
-    //         // connection.query(sql, function(err, results) {
-    //         //     if(err) console.log(err);
-    //         //     console.log(results);
-    //         // });
-
-
-    //     }
-
-    //    )
+      
+   
         // ВТОРОЙ ЗАПРОС - получаем ключ pt 00 в контенте ВАЖНО ПРИ ЭТОМ УКАЗАТЬ СЕССИЮ !!!
         // ВТОРОЙ ЗАПРОС - получаем ключ pt 00 в контенте ВАЖНО ПРИ ЭТОМ УКАЗАТЬ СЕССИЮ !!!
         // ВТОРОЙ ЗАПРОС - получаем ключ pt 00 в контенте ВАЖНО ПРИ ЭТОМ УКАЗАТЬ СЕССИЮ !!!
         .then(
-            function (content) {
+            function () {
                 //console.log(content.headers['set-cookie'], "все куки от сервера перед шаг 002");
                 //PHPSESSIONID = parseCookiesPHPSessionValue(content.headers['set-cookie']);
 
@@ -435,8 +256,9 @@ async function getAds(url) {
             //console.log(content.headers['set-cookie'], "все куки от сервера перед шаг 004");
             console.log(content.data);
             text.phone = content.data.value;
+
+            return text;            
             
-            return text;
         })
 
 
