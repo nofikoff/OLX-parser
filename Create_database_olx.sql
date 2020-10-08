@@ -6,7 +6,7 @@ use olx
 ---------------------------------------------------------
 -- Table structure for table `category`
 
---drop table category
+--drop table category;
 
 CREATE TABLE category (
   [ID] int NOT NULL identity(1, 1) primary key,
@@ -14,11 +14,7 @@ CREATE TABLE category (
   [Categ_url] nvarchar(100) NOT NULL,
   CONSTRAINT AK_Categ_url_ID unique ([Categ_url]),
   [Parent] int NOT NULL,
-  CONSTRAINT AK_ParentID unique ([Parent]),
-  [Last_update_data] datetime2(0) NOT NULL,
-  [Ad_url_id] int NOT NULL,
-
-  CONSTRAINT FK1_ad_url_id  foreign key ([Ad_url_id]) references urls ([id])
+  [Last_update_data] datetime2(0) NOT NULL
 );
 
 ---------------------------------------------------------
@@ -33,10 +29,7 @@ CREATE TABLE profiles (
   [Prof_url] nvarchar(200) NOT NULL,
   CONSTRAINT AK_urlProfID  unique ([Prof_url]),
   [Last_update_data] datetime2(0) NOT NULL,
-  [Prof_status] int NOT NULL,
-  [Ad_url_id] int NOT NULL,
-
-  CONSTRAINT FK_ad_url_id  foreign key ([Ad_url_id]) references urls ([id])
+  [Prof_status] int NOT NULL
 );
 
 ---------------------------------------------------------
@@ -55,6 +48,16 @@ CREATE TABLE phones (
 );
 
 ---------------------------------------------------------
+-- Table structure for table `tag_group`
+
+--drop table tag_group;
+
+CREATE TABLE tag_group (
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Tag_name] nvarchar(100) NOT NULL
+);
+
+---------------------------------------------------------
 -- Table structure for table `tags`
 
 --drop table tags;
@@ -63,8 +66,23 @@ CREATE TABLE tags (
   [ID] int NOT NULL identity(1, 1) primary key,
   [Tag_name] nvarchar(150) NOT NULL,
   [Last_update_data] datetime2(0) NOT NULL,
-  [Tag_url] nvarchar(150) NOT NULL
+  [Tag_url] nvarchar(150) NOT NULL,
+  [Group_id] int not null
+
+    CONSTRAINT FK_tag_group_id  foreign key ([Group_id]) references tag_group ([ID]),
 );
+
+---------------------------------------------------------
+-- Table structure for table `urls`
+
+--drop table urls;
+
+CREATE TABLE urls (
+  [ID] int NOT NULL identity(1, 1) primary key,
+  [Status] binary NOT NULL,
+  [Last_update_data] datetime2(0) NOT NULL,
+  [Url_name] nvarchar(200) NOT NULL unique
+  );
 
 ---------------------------------------------------------
 -- Table structure for table `ads`
@@ -105,14 +123,3 @@ CREATE TABLE ads2tags (
   CONSTRAINT FK_tag_id  foreign key ([Tag_id]) references tags ([id])
 
 );
-
---drop table urls;
-
-CREATE TABLE urls (
-  [ID] int NOT NULL identity(1, 1) primary key,
-  [Status] binary NOT NULL,
-  [Last_update_data] datetime2(0) NOT NULL,
-  [Url_name] nvarchar(200) NOT NULL unique,
-  [Url_type] nvarchar(100) NOT NULL,
-
-  );
