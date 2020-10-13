@@ -24,12 +24,12 @@ const config = {
 			trustedConnection: true,
             database: 'olx'  //update me
         }*/
-    user: 'olx',
-    password: 'Xxl5124315',
+    user: 'olx002',
+    password: '5124315',
     //password: 'masterkey',
     //server: 'localhost',
     server: 'flat.pogonyalo.com',
-    database: 'olx',
+    database: 'olx002',
 }
 
 let our_connection;
@@ -101,7 +101,7 @@ let import003 = (vectorAllCategories) => {
 
                             // пытаемся найти в бюазе ID родителя по его URL
                         } else if (vectorAllCategories[url_current_node].parent !== '') {
-                            let sql = "SELECT * FROM [olx].[dbo].[category] WHERE Categ_url = '" + vectorAllCategories[url_current_node].parent + "'";
+                            let sql = "SELECT * FROM category WHERE Categ_url = '" + vectorAllCategories[url_current_node].parent + "'";
 
                             //console.log("sql=",sql);
 
@@ -173,9 +173,9 @@ let import003 = (vectorAllCategories) => {
                             // если ID родитедя определен и он не -1
                             if (parent_id !== -1) {
                                 console.log("ВТОРОЙ then Родитель определён - сохраняем текущий узел", parent_id)
-                                let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update_data) VALUES ( '" + vectorAllCategories[url_current_node].name + "', '" + url_current_node + "', '" + parent_id + "', GETDATE());";
+                                let sql = "INSERT INTO category (Categ_name, Categ_url, Parent, Last_update) VALUES ( '" + vectorAllCategories[url_current_node].name + "', '" + url_current_node + "', '" + parent_id + "', GETDATE());";
                                 our_connection.request().query(sql, function (err, result) {
-
+                                    console.log(sql);
                                     // if (typeof result.insertId !== "undefined")
                                     //     cacheParentUrl2Id[url_current_node] = result.insertId;
                                     //  if (err.code !== 'ER_DUP_ENTRY') {

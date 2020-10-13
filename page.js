@@ -132,6 +132,18 @@ async function getAds(url) {
 				
 				
 
+                text.categoryUrl = '';
+                $('#breadcrumbTop').find('a').each((idx, elem) => {
+                    let title = $(elem).attr('href');
+
+					if (title.indexOf("/list/") === -1) text.categoryUrl = title;
+
+
+                })
+
+
+
+
                 text.hashTags = [];
                 $('ul.offer-details').find('li').each(function (index, element) {
 

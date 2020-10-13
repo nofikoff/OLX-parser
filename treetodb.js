@@ -16,12 +16,12 @@ var config = {
     authentication: {
         type: 'default',
         options: {
-            userName: 'olx', // update me
-            password: 'Xxl5124315' // update me
+            userName: 'olx002', // update me
+            password: '5124315' // update me
         }
     },
     options: {
-        database: 'olx'
+        database: 'olx002'
     }
 }
 var connection = new Connection(config);

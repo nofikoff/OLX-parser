@@ -52,8 +52,8 @@ const axios = require('axios');
 let sqlArrayTrees = [];
 // основноый вызов
 
-getChildren('https://www.olx.ua/odessa/')
-    //getChildren('https://www.olx.ua/transport/legkovye-avtomobili/')
+//getChildren('https://www.olx.ua/odessa/')
+    getChildren('https://www.olx.ua/nedvizhimost/posutochno-pochasovo/')
     .then((xxx) => {
         console.log("ПИШЕМ В БД2\n", xxx);
         const tree2db = require('./treetomssqldb2');
