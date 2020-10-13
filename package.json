@@ -4,6 +4,8 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@sentry/node": "^5.26.0",
+    "@sentry/tracing": "^5.26.0",
     "asyncawait": "^3.0.0",
     "axios": "^0.20.0",
     "cheerio": "^1.0.0-rc.3",
