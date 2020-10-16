@@ -143,23 +143,23 @@ async function getAds(url) {
                         $(element).find('.offer-details__value').find('a').each(function (index2, element2) {
                                 let val = $(element2).text().toLowerCase();
                                 // нулевые пропускаем
-                                if (val !== '')
-                                    text.hashTags.push([
-                                        $(element)
-                                            .find('.offer-details__name')
-                                            .text().toLowerCase(),
-                                        val
-                                    ]);
+                                if (val !== ''){
+
+                                    // если данных внутри этой горуппы тегов нет
+                                    // то инициализируем как пустой масив чтобы дальше ПУШИТЬ
+                                    if (typeof text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] !== "object")
+                                        text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] = [];
+
+                                    text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()].push(val);
+                                }
                             }
                         )
                     } else {
                         let val = $(element).find('.offer-details__value').text().toLowerCase();
                         // нулевые пропускаем
                         if (val !== '')
-                            text.hashTags.push([
-                                $(element).find('.offer-details__name').text().toLowerCase(),
-                                val
-                            ]);
+                        text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] = [];
+                        text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()].push(val);
                     }
                 });
 
@@ -253,12 +253,19 @@ async function getAds(url) {
 /**
  * Запускаем скрипт, вызвав main().
  */
-getAds('https://www.olx.ua/obyavlenie/kvartira-posutochno-odnokomnatnaya-s-evroremontom-v-tsentre-goroda-IDDr3Q7.html').then((xxx) => {
-        console.log("объявление спарсили и вот что получилось:\n", xxx);
+getAds('https://www.olx.ua/obyavlenie/kvartira-posutochno-odnokomnatnaya-s-evroremontom-v-tsentre-goroda-IDDr3Q7.html')
+    .then((xxx) => {
+        //console.log("объявление спарсили и вот что получилось:\n", xxx);
+
         //тут надо вызвать сохранение в БД
 		const page2db = require('./pagetodb');
+        const tagsToDB = require('./tagsToDB');
+
         page2db.save(xxx);
-    })
+        tagsToDB.save(xxx.hashTags);
+    }).catch(err => {
+    //console.log(err);
+});
 
 
 //парсим ключ из кукисов, чтобы использовать в сессии парсинга телефона
