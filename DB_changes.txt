@@ -1,0 +1,11 @@
+use olx 
+alter table dbo.tags
+alter column Tag_url nvarchar(150) null;
+
+alter table [dbo].[ads]
+alter column [Description] varchar(max) not null;
+
+alter table [dbo].[ads]
+alter column [Images] varchar(max) not null;
+
+ALTER TABLE [dbo].[tag_group] ADD CONSTRAINT U_Name UNIQUE([Tag_name]);
