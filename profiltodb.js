@@ -2,7 +2,7 @@ let async = require('asyncawait/async');
 let await = require('asyncawait/await');
 //const tedious = require("tedious");
 const sql = require('mssql')
-
+const matchAll = require('match-all');
 
 
 // сокращения url
@@ -85,11 +85,12 @@ let import003 = (profile) => {
 
 
     console.log("fun 2 = " , profile.phone);
-    //console.log("fun 1 = " + Prof_url);
+
 
     /** определим ID Родителя по его адресу **/
     /** определим ID Родителя по его адресу **/
     /** определим ID Родителя по его адресу **/
+    
     return new Promise((resolve) => {
 
         let profile_id;
@@ -102,26 +103,44 @@ let import003 = (profile) => {
 
 
             // если успешно сохранен проайл то сохраняем его телефоны  
-            if (typeof result !== "undefined") {
+            if (typeof result !== "undefined" ) {
                 //  let x = 0;
                 profile_id = result.recordset[0].ID;
 
                 console.log("tut id ", profile_id);
 
-                //TODO: for
-                //  array.forEach(element => {
 
-                //  });
+                let arei = [];
+                matches = matchAll(profile.phone.replace(/\s|\(|\)|-/g, '') , /(0\d{9})/g);
+                let r = 0;
+                for ( let match of matches.toArray()) 
+                {
+                    r++;
+                    arei[r] = match ;
+                   // console.log(match);
+                }
+                //console.log("werwrew",arei);
+                
 
-                let sql_phon = "INSERT INTO phones (Phone_num, Scan_date,  Phone_status, Prof_id) VALUES ( '" + profile.phone + "', GETDATE() , 0 ,  " + profile_id + ")";
-                return con.request()
+                  for (let i = 1; i < arei.length; i++) {
+                    let sql_phon = "INSERT INTO phones (Phone_num, Scan_date,  Phone_status, Prof_id) VALUES ( '" + arei[i] + "', GETDATE() , 0 ,  " + profile_id + ")";
+                     console.log(sql_phon);
+                  
+                     con.request()
                     .query(sql_phon, function (err, result2) {
-                        console.log(sql_phon);
+                        //console.log(sql_phon);
+                        //return(profile_id);
 
-                        resolve (profile_id);
+                       // resolve (profile_id);
 
                     });
 
+                  }
+                  resolve (profile_id);
+                  
+ 
+
+ 
 
             }
 

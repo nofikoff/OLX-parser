@@ -17,8 +17,9 @@ let sqlArrayTrees;
 
 
 // сокращения url
+var url_oll = "https://www.olx.ua/obyavlenie/otdyh-v-zakarpate-s-polyana-dom-faina-arenda-IDEozJb.html#0ee762f604";
 //var url_oll ="https://www.olx.ua/obyavlenie/shikarniy-budinok-na-mar-yanvts-IDJsiCT.html#66e75f278a";
-var url_oll ="https://www.olx.ua/obyavlenie/mercedes-benz-vito-2006-2-2-diesel-IDJqgqd.html#582b4ef667;promoted";
+//var url_oll ="https://www.olx.ua/obyavlenie/prodam-vito-v-horoshem-sostoyanii-IDJulqi.html#14cad6dd38";
 //var url_oll ="https://www.olx.ua/obyavlenie/kurtka-puhovik-novaya-zimnyaya-fila-puma-IDFwPTL.html?sd=1#2d12d0e86b";
 var withoutLastChunk = url_oll.slice(0, url_oll.lastIndexOf("html"));
 let may_url =  withoutLastChunk + "html"
@@ -32,7 +33,7 @@ getAds(may_url)
 })
 .then(
     (ID)=>{
-        console.log("URL_ID ", ID);
+        console.log("АДРЕЙ ЛОВИ НАШ ПРОФАЙЛ _ID ", ID);
         
     }
 )
@@ -287,6 +288,4 @@ function parseCookiesPHPSessionValue(response) {
     });
     return result;
 }
-
-
 
