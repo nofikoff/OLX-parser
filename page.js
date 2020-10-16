@@ -81,67 +81,63 @@ async function getAds(url) {
                     text.images.push(title);
                 })
 
-				text.urlCategory = [];
-				
-				$('table#breadcrumbTop').find('a').each(function (index, element) {
+                text.urlCategory = [];
 
-                     //console.log("url category = ", $(element).attr('href'));
-                     //console.log($(element).find('.offer-details__value').text())
-					 let urlcategory = $(element).attr('href');
-					 if (urlcategory.indexOf("/list/")===-1){
-						 text.urlCategory = urlcategory;
-					 }
-					 
+                $('table#breadcrumbTop').find('a').each(function (index, element) {
 
-                    
+                    //console.log("url category = ", $(element).attr('href'));
+                    //console.log($(element).find('.offer-details__value').text())
+                    let urlcategory = $(element).attr('href');
+                    if (urlcategory.indexOf("/list/") === -1) {
+                        text.urlCategory = urlcategory;
+                    }
+
+
                 });
-				
-				text.bottombar=[];
-				
-				// pars Ad number
- 
- var ad_num = text.AD_NUMBER = $('.offer-bottombar__items > li > strong').text().trim();
- console.log(ad_num);
-				
-				
-				// data
-                var str =  $('.offer-bottombar__item > em > strong').text().trim();
+
+                text.bottombar = [];
+
+                // pars Ad number
+
+                var ad_num = text.AD_NUMBER = $('.offer-bottombar__items > li > strong').text().trim();
+                console.log(ad_num);
+
+
+                // data
+                var str = $('.offer-bottombar__item > em > strong').text().trim();
                 console.log(str);
 
-               // var str = 'в 14:12, 27 февраля 2020';
+                // var str = 'в 14:12, 27 февраля 2020';
 
                 const moment = require('moment');
 
-                                // перед тем как пользоваться нужно установить - npm i moment 
-                                // and write const moment = require('moment');
-                                //https://momentjs.com/docs/#/i18n/
-                moment.locale('ru'); 
+                // перед тем как пользоваться нужно установить - npm i moment
+                // and write const moment = require('moment');
+                //https://momentjs.com/docs/#/i18n/
+                moment.locale('ru');
                 // console.log(moment.months(moment));
-                let p = str.substring(12,20);  
-                            
+                let p = str.substring(12, 20);
+
 
                 // выводит месяц
                 //  console.log(moment().set('month', p));
                 //  console.log(moment().get('month'));
-                
+
                 var a = moment().set('month', p);
                 //console.log(a.month()+1); 
-                console.log(moment([str.substring(str.length - 4), a.month(), str.substring(9,11) ]).format("YYYY-MM-DD"));
-                console.log(str.substring(2,7));
-				text.Dat = moment([str.substring(str.length - 4), a.month(), str.substring(9,11) ]).format("YYYY-MM-DD") + " " +str.substring(2,7);
-				
-				
+                console.log(moment([str.substring(str.length - 4), a.month(), str.substring(9, 11)]).format("YYYY-MM-DD"));
+                console.log(str.substring(2, 7));
+                text.Dat = moment([str.substring(str.length - 4), a.month(), str.substring(9, 11)]).format("YYYY-MM-DD") + " " + str.substring(2, 7);
+
 
                 text.categoryUrl = '';
                 $('#breadcrumbTop').find('a').each((idx, elem) => {
                     let title = $(elem).attr('href');
 
-					if (title.indexOf("/list/") === -1) text.categoryUrl = title;
+                    if (title.indexOf("/list/") === -1) text.categoryUrl = title;
 
 
                 })
-
-
 
 
                 text.hashTags = [];
@@ -154,23 +150,37 @@ async function getAds(url) {
                         $(element).find('.offer-details__value').find('a').each(function (index2, element2) {
                                 let val = $(element2).text().toLowerCase();
                                 // нулевые пропускаем
-                                if (val !== '')
-                                    text.hashTags.push([
-                                        $(element)
-                                            .find('.offer-details__name')
-                                            .text().toLowerCase(),
-                                        val
-                                    ]);
+                                if (val !== '') {
+                                    // text.hashTags.push([
+                                    //     $(element).find('.offer-details__name').text().toLowerCase(),
+                                    //     val
+                                    // ]);
+
+                                    // если данных внутри этой горуппы тегов нет
+                                    // то инициализируем как пустой масив чтобы дальше ПУШИТЬ
+                                    if (typeof text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] !== "object")
+                                        text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] = [];
+
+                                    text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()].push(val);
+                                }
+
                             }
                         )
                     } else {
                         let val = $(element).find('.offer-details__value').text().toLowerCase();
                         // нулевые пропускаем
                         if (val !== '')
-                            text.hashTags.push([
-                                $(element).find('.offer-details__name').text().toLowerCase(),
-                                val
-                            ]);
+
+                            // text.hashTags.push([
+                            //     $(element).find('.offer-details__name').text().toLowerCase(),
+                            //     val
+                            // ]);
+
+
+                            text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()] = [];
+                            text.hashTags[$(element).find('.offer-details__name').text().toLowerCase()].push(val);
+
+
                     }
                 });
 
@@ -250,7 +260,7 @@ async function getAds(url) {
             //console.log(content.data);
             text.phone = content.data.value;
             //console.log(text)
-			return text;
+            return text;
         })
 
 
@@ -265,11 +275,11 @@ async function getAds(url) {
  * Запускаем скрипт, вызвав main().
  */
 getAds('https://www.olx.ua/obyavlenie/kvartira-posutochno-odnokomnatnaya-s-evroremontom-v-tsentre-goroda-IDDr3Q7.html').then((xxx) => {
-        console.log("объявление спарсили и вот что получилось:\n", xxx);
-        //тут надо візвать сохранение в БД
-		//const tree2db = require('./treetomssqldb2');
-        //tree2db.save(xxx);
-    })
+    console.log("объявление спарсили и вот что получилось:\n", xxx);
+    //тут надо візвать сохранение в БД
+    //const tree2db = require('./treetomssqldb2');
+    //tree2db.save(xxx);
+})
 
 
 //парсим ключ из кукисов, чтобы использовать в сессии парсинга телефона
