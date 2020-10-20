@@ -126,7 +126,7 @@ new Promise(function (resolve, reject)  {
 								})
                                 }).then((categ_id) => {
                             console.log("ВТОРОЙ then categoryid найден", categ_id)
-                            let sql = `INSERT INTO ads (Ad_name, Adress, price, Description, images,Categ_id, Ad_number,Ad_creation_data,Last_update_data,Status,Ad_url_id) VALUES ("${Adsxxx.title}", "${Adsxxx.address}", ${Adsxxx.price}, "${Adsxxx.desc}", "${Adsxxx.images}",${categ_id}, ${Adsxxx.AD_NUMBER}, '${Adsxxx.Dat}',GETDATE(),1,221)`;
+                            let sql = `INSERT INTO ads (Prof_ID, Ad_name, Adress, price, Description, images,Categ_id, Ad_number,Ad_creation_data,Last_update_data,Status,Ad_url_id) VALUES (1002, '${Adsxxx.title}', '${Adsxxx.address}', ${Adsxxx.price}, '${Adsxxx.desc}', '${Adsxxx.images}',${categ_id}, ${Adsxxx.AD_NUMBER}, '${Adsxxx.Dat}',GETDATE(),1,221)`;
 							//console.log("sql query text = ",sql);
                             
                             
